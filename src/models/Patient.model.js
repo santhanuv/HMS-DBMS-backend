@@ -53,8 +53,26 @@ module.exports = (sequelize, DataTypes) => {
     },
   };
 
-  return sequelize.define("Patient", patientSchema, {
+  const Patient = sequelize.define("Patient", patientSchema, {
     tableName: "patient",
     timestamps: false,
   });
+
+  Patient.associate = ({ Appointment, Inpatient }) => {
+    Patient.hasMany(Appointment, {
+      foreignKey: "patientID",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    });
+    Appointment.belongsTo(Patient);
+
+    Patient.hasOne(Inpatient, {
+      foreignKey: "patientID",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    });
+    Inpatient.belongsTo(Patient);
+  };
+
+  return Patient;
 };

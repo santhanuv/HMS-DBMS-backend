@@ -13,8 +13,26 @@ module.exports = (sequelize, DataTypes) => {
     },
   };
 
-  return sequelize.define("Gender", genderSchema, {
+  const Gender = sequelize.define("Gender", genderSchema, {
     tableName: "gender",
     timestamp: false,
   });
+
+  Gender.associate = ({ Patient, Staff }) => {
+    Gender.hasMany(Patient, {
+      foreignKey: "genderID",
+      onDelete: "Restrict",
+      onUpdate: "CASCADE",
+    });
+    Patient.belongsTo(Gender);
+
+    Gender.hasMany(Staff, {
+      foreignKey: "genderID",
+      onDelete: "Restrict",
+      onUpdate: "CASCADE",
+    });
+    Staff.belongsTo(Gender);
+  };
+
+  return Gender;
 };

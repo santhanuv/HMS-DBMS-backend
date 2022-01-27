@@ -13,8 +13,19 @@ module.exports = (sequelize, DataTypes) => {
     },
   };
 
-  return sequelize.define("Department", departmentSchema, {
+  const Department = sequelize.define("Department", departmentSchema, {
     tableName: "department",
     timestamps: false,
   });
+
+  Department.associate = ({ Staff }) => {
+    Department.hasMany(Staff, {
+      foreignKey: "departmentID",
+      onDelete: "RESTRICT",
+      onUpdate: "CASCADE",
+    });
+    Staff.belongsTo(Department);
+  };
+
+  return Department;
 };

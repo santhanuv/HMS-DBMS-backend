@@ -57,8 +57,19 @@ module.exports = (sequelize, DataTypes) => {
     },
   };
 
-  return sequelize.define("Staff", staffSchema, {
+  const Staff = sequelize.define("Staff", staffSchema, {
     tableName: "staff",
     timestamps: false,
   });
+
+  Staff.associate = ({ Doctor }) => {
+    Staff.hasOne(Doctor, {
+      foreignKey: "doctorID",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    });
+    Doctor.belongsTo(Staff);
+  };
+
+  return Staff;
 };

@@ -20,8 +20,19 @@ module.exports = (sequelize, DataTypes) => {
     },
   };
 
-  return sequelize.define("Medicine", medicineSchema, {
+  const Medicine = sequelize.define("Medicine", medicineSchema, {
     tableName: "medicine",
     timestamps: false,
   });
+
+  Medicine.associate = ({ Medication }) => {
+    Medicine.hasMany(Medication, {
+      foreignKey: "medicineID",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    });
+    Medication.belongsTo(Medicine);
+  };
+
+  return Medicine;
 };

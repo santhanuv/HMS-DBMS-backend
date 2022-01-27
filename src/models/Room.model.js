@@ -6,10 +6,6 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       primaryKey: true,
     },
-    isAvailable: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-    },
     rent: {
       type: DataTypes.FLOAT,
       allowNull: false,
@@ -17,6 +13,11 @@ module.exports = (sequelize, DataTypes) => {
     typeID: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    inpatientID: {
+      type: DataTypes.INTEGER,
+      defaultValue: null,
+      unique: true,
     },
   };
 

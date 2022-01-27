@@ -16,8 +16,26 @@ module.exports = (sequelize, DataTypes) => {
     },
   };
 
-  return sequelize.define("District", districtSchema, {
+  const District = sequelize.define("District", districtSchema, {
     tableName: "district",
     timestamps: false,
   });
+
+  District.associate = ({ Patient, Staff }) => {
+    District.hasMany(Patient, {
+      foreignKey: "districtID",
+      onDelete: "RESTRICT",
+      onUpdate: "CASCADE",
+    });
+    Patient.belongsTo(District);
+
+    District.hasMany(Staff, {
+      foreignKey: "districtID",
+      onDelete: "RESTRICT",
+      onUpdate: "CASCADE",
+    });
+    Staff.belongsTo(District);
+  };
+
+  return District;
 };

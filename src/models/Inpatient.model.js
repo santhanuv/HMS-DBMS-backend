@@ -5,11 +5,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       primaryKey: true,
     },
-    roomID: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      unique: true,
-    },
     admittedDate: {
       type: DataTypes.DATEONLY,
       allowNull: false,
@@ -20,8 +15,19 @@ module.exports = (sequelize, DataTypes) => {
     },
   };
 
-  return sequelize.define("Inpatient", inpatientSchema, {
+  const Inpatient = sequelize.define("Inpatient", inpatientSchema, {
     tableName: "inpatient",
     timestamps: false,
   });
+
+  Inpatient.associate = ({ Room }) => {
+    Inpatient.hasOne(Room, {
+      foreignKey: "inpatientID",
+      onDelete: "SET NULL",
+      onUpdate: "CASCADE",
+    });
+    Room.belongsTo(Inpatient);
+  };
+
+  return Inpatient;
 };

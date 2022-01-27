@@ -17,8 +17,19 @@ module.exports = (sequelize, DataTypes) => {
     },
   };
 
-  return sequelize.define("RoomType", roomTypeSchema, {
+  const RoomType = sequelize.define("RoomType", roomTypeSchema, {
     tableName: "roomType",
     timestamps: false,
   });
+
+  RoomType.associate = ({ Room }) => {
+    RoomType.hasMany(Room, {
+      foreignKey: "typeID",
+      onDelete: "RESTRICT",
+      onUpdate: "CASCADE",
+    });
+    Room.belongsTo(RoomType);
+  };
+
+  return RoomType;
 };

@@ -29,8 +29,19 @@ module.exports = (sequelize, DataTypes) => {
     },
   };
 
-  return sequelize.define("Previlage", previlageSchema, {
+  const Previlage = sequelize.define("Previlage", previlageSchema, {
     tableName: "previlage",
     timestamps: false,
   });
+
+  Previlage.associate = ({ Staff }) => {
+    Previlage.hasMany(Staff, {
+      foreignKey: "previlageID",
+      onDelete: "RESTRICT",
+      onUpdate: "CASCADE",
+    });
+    Staff.belongsTo(Previlage);
+  };
+
+  return Previlage;
 };
