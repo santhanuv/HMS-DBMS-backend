@@ -1,54 +1,57 @@
 const Patient = require("../models/index")["Patient"];
 
-const createPatient = async (patient) => {
+const createPatient = async (patient, options = {}) => {
   try {
     if (!patient) return;
-    return await Patient.create(patient);
+    return await Patient.create(patient, options);
   } catch (err) {
     throw err;
   }
 };
 
-const findPatient = async (options) => {
+const findPatient = async (values, options) => {
   try {
-    const patients = await Patient.findAll(options);
+    if (!values) return null;
+    const patients = await Patient.findAll(values, options);
     return JSON.stringify(patients);
   } catch (err) {
     throw err;
   }
 };
 
-const findPatientByID = async (patientID) => {
+const findPatientByID = async (patientID, options = {}) => {
   try {
-    const patientRow = await Patient.findOne({ where: { patientID } });
+    if (!patientID) return null;
+    const patientRow = await Patient.findOne({ where: { patientID } }, options);
     return patientRow.toJSON();
   } catch (err) {
     throw err;
   }
 };
 
-const findPatientByEmail = async (email) => {
+const findPatientByEmail = async (email, options) => {
   try {
-    const patientRow = await Patient.findOne({ where: { email } });
+    if (!email) return null;
+    const patientRow = await Patient.findOne({ where: { email } }, options);
     return patientRow.toJSON();
   } catch (err) {
     throw err;
   }
 };
 
-const deletePatientByID = async (patientID) => {
+const deletePatientByID = async (patientID, options) => {
   try {
     if (!patientID) return -1;
-    return await Patient.destroy({ where: { patientID } });
+    return await Patient.destroy({ where: { patientID }, ...options });
   } catch (err) {
     throw err;
   }
 };
 
-const deletePatientByEmail = async (email) => {
+const deletePatientByEmail = async (email, options) => {
   try {
     if (!email) return -1;
-    return await Patient.destroy({ where: { email } });
+    return await Patient.destroy({ where: { email }, ...options });
   } catch (err) {
     throw err;
   }

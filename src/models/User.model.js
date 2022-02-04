@@ -68,8 +68,6 @@ module.exports = (sequelize, DataTypes) => {
     hooks: {
       beforeCreate: passwordHashHook,
       beforeUpdate: passwordHashHook,
-      // will exclude password after creating a new user (otherwise will send password)
-      afterCreate: async (user) => await user.reload(),
     },
     defaultScope: {
       attributes: { exclude: ["password"] },
@@ -92,7 +90,11 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: "CASCADE",
       onUpdate: "CASCADE",
     });
-    Patient.belongsTo(User);
+    Patient.belongsTo(User, {
+      foreignKey: "patientID",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    });
 
     User.hasOne(Valid_Session, {
       foreignKey: "userID",

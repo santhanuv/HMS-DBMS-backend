@@ -21,23 +21,24 @@ const getUserByIdHandler = async (req, res) => {
 };
 
 const createUserHandler = async (req, res) => {
-  const { gender, state, district, ...rest } = req.body;
-  const genderID = await findGenderID(gender);
-  const stateID = await findStateID(state);
-  const districtID = await findDistrictID(district, stateID);
-
-  // Check if null
-  if (!genderID || !stateID || !districtID)
-    return res
-      .json({
-        err: {
-          msg: `Invalid ${!genderID && "gender"}${!stateID && ", state"}${
-            !districtID && ", district"
-          }`,
-        },
-      })
-      .status(400);
   try {
+    const { gender, state, district, ...rest } = req.body;
+    const genderID = await findGenderID(gender);
+    const stateID = await findStateID(state);
+    const districtID = await findDistrictID(district, stateID);
+
+    // Check if null
+    if (!genderID || !stateID || !districtID)
+      return res
+        .json({
+          err: {
+            msg: `Invalid ${!genderID && "gender"}${!stateID && ", state"}${
+              !districtID && ", district"
+            }`,
+          },
+        })
+        .status(400);
+
     const userObject = await createUser({
       ...rest,
       genderID,
