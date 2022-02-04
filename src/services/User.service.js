@@ -1,9 +1,9 @@
 const User = require("../models/index")["User"];
 
-const createUser = async (user) => {
+const createUser = async (user, options) => {
   try {
     if (!user) return;
-    return await User.create(user);
+    return await User.create(user, options);
   } catch (err) {
     throw err;
   }

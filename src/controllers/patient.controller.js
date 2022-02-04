@@ -1,26 +1,43 @@
 const {
   createPatient,
   deletePatientByID,
-  findPatient,
 } = require("../services/Patient.service");
-const { findGenderID } = require("../services/Gender.service");
-const { findStateID } = require("../services/State.service");
-const { findDistrictID } = require("../services/District.service");
 const logger = require("../utils/logger");
 
 const createPatientHandler = async (req, res) => {
-  const { gender, state, district, ...rest } = patient;
-  const genderID = await findGenderID(gender);
-  const stateID = await findStateID(state);
-  const districtID = await findDistrictID(district, stateID);
+  const { newUser, transaction } = req;
+  const { emergencyNumber } = req.body;
+  const newUserID = newUser.userID;
+  try {
+    if (!newUser || !transaction || !newUserID) {
+      await transaction.rollback();
+      return res.sendStatus(500);
+    }
 
-  const newPatient = {
-    ...rest,
-    genderID,
-    stateID,
-    districtID: districtID,
-  };
+    if (emergencyNumber) {
+      const { dataValues } = await createPatient(
+        { patientID: newUserID, emergencyNumber },
+        { transaction }
+      );
+
+      if (!dataValues) {
+        await transaction.rollback();
+        return res.sendStatus(500);
+      }
+
+      await transaction.commit();
+      return res.json({ ...newUser, ...dataValues }).status(200);
+    } else {
+      await transaction.rollback();
+      res.sendStatus(400);
+    }
+  } catch (err) {
+    console.log("Error", err);
+    await transaction.rollback();
+    return res.sendStatus(500);
+  }
 };
+
 const deletePatientHandler = async (req, res) => {
   try {
     const result = await deletePatientByID(1);
