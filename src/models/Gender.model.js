@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
   const genderSchema = {
     genderID: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       autoIncrement: true,
       primaryKey: true,
     },
@@ -14,8 +14,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   const Gender = sequelize.define("Gender", genderSchema, {
-    tableName: "gender",
-    timestamp: false,
+    timestamps: false,
   });
 
   Gender.associate = ({ Patient, Staff }) => {

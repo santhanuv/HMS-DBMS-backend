@@ -17,7 +17,6 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   const District = sequelize.define("District", districtSchema, {
-    tableName: "district",
     timestamps: false,
   });
 

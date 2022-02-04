@@ -12,13 +12,12 @@ const checkConnection = async (sequelize) => {
   }
 };
 
-module.exports = async function dbConnect() {
+module.exports = function dbConnect() {
   const sequelize = new Sequelize(
     config.database,
     config.username,
     config.password,
     config.options
   );
-  await checkConnection(sequelize);
   return sequelize;
 };

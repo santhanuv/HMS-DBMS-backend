@@ -7,38 +7,40 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
     },
     state: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.STRING,
       allowNull: false,
       unique: true,
     },
   };
 
   const State = sequelize.define("State", stateSchema, {
-    tableName: "state",
     timestamps: false,
   });
 
   State.associate = ({ District, Patient, Staff }) => {
-    State.hasMany(District, {
+    const districtOptions = {
       foreignKey: "stateID",
       onDelete: "CASCADE",
       onUpdate: "CASCADE",
-    });
-    District.belongsTo(State);
+    };
+    State.hasMany(District, districtOptions);
+    District.belongsTo(State, districtOptions);
 
-    State.hasMany(Patient, {
+    const patientOptions = {
       foreignKey: "stateID",
       onDelete: "RESTRICT",
       onUpdate: "CASCADE",
-    });
-    Patient.belongsTo(State);
+    };
+    State.hasMany(Patient, patientOptions);
+    Patient.belongsTo(State, patientOptions);
 
-    State.hasMany(Staff, {
+    const staffOptions = {
       foreignKey: "stateID",
       onDelete: "RESTRICT",
       onUpdate: "CASCADE",
-    });
-    Staff.belongsTo(State);
+    };
+    State.hasMany(Staff, staffOptions);
+    Staff.belongsTo(State, staffOptions);
   };
 
   return State;
