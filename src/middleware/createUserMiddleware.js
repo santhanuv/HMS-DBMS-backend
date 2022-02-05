@@ -1,7 +1,7 @@
 const { createUser } = require("../services/User.service");
-const { findGenderID } = require("../services/Gender.service");
-const { findStateID } = require("../services/State.service");
-const { findDistrictID } = require("../services/District.service");
+const { findGenderByName } = require("../services/Gender.service");
+const { findStateByName } = require("../services/State.service");
+const { findDistrictByName } = require("../services/District.service");
 const sequelize = require("../models")["sequelize"];
 
 module.exports = async (req, res, next) => {
@@ -19,9 +19,14 @@ module.exports = async (req, res, next) => {
       dob,
       address,
     } = req.body;
-    const genderID = await findGenderID(gender);
-    const stateID = await findStateID(state);
-    const districtID = await findDistrictID(district, stateID);
+    const {
+      dataValues: { genderID, gender: genderName },
+    } = await findGenderByName(gender);
+    const { stateID, state: stateName } = await findStateByName(state);
+    const { districtID, district: districtName } = await findDistrictByName(
+      district,
+      stateID
+    );
 
     if (!genderID || !stateID || !districtID) {
       transaction.rollback();
@@ -50,10 +55,16 @@ module.exports = async (req, res, next) => {
     };
 
     const {
-      dataValues: { password: omit, ...newUser },
+      dataValues: {
+        password: passomit,
+        genderID: genderomit,
+        stateID: stateomit,
+        districtID: districtomit,
+        ...newUser
+      },
     } = await createUser(user, { transaction });
 
-    req.newUser = newUser;
+    req.newUser = { ...newUser, genderName, stateName, districtName };
     req.transaction = transaction;
 
     return next();

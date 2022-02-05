@@ -1,40 +1,33 @@
 const District = require("../models/index")["District"];
 
-const findDistrict = async (options, limitToOne = false) => {
+const findDistrict = async (options) => {
   try {
-    const districtRow = limitToOne
-      ? await District.findOne(options)
-      : await District.findAll(options);
-    if (!districtRow) return null;
-    return JSON.stringify(districtRow);
+    if (!options) throw new Error("Invalid options");
+    return await District.findAll(options);
   } catch (err) {
     throw err;
   }
 };
 
-const findDistrictID = async (district, stateID) => {
+const findDistrictByID = async (districtID) => {
   try {
-    if (!district || !stateID) return null;
-    const districtRow = await District.findOne({
+    if (!districtID) throw new Error("Invalid districtID");
+
+    return await District.findOne({ where: { districtID } });
+  } catch (err) {
+    throw err;
+  }
+};
+
+const findDistrictByName = async (district, stateID) => {
+  try {
+    if (!district || !stateID) throw new Error("Invalid options");
+    return await District.findOne({
       where: { district, stateID },
     });
-    if (!districtRow) return null;
-    return districtRow.toJSON().districtID;
   } catch (err) {
     throw err;
   }
 };
 
-const findDistrictName = async (districtID) => {
-  try {
-    if (!districtID) return;
-
-    const districtRow = await District.findOne({ where: { districtID } });
-    if (!districtRow) return null;
-    else return districtRow.toJSON().district;
-  } catch (err) {
-    throw err;
-  }
-};
-
-module.exports = { findDistrict, findDistrictID, findDistrictName };
+module.exports = { findDistrict, findDistrictByID, findDistrictByName };

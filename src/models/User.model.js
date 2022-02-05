@@ -84,7 +84,8 @@ module.exports = (sequelize, DataTypes) => {
     return await bcrypt.compare(password, this.password);
   };
 
-  User.associate = ({ Patient, Valid_Session }) => {
+  User.associate = ({ Patient, Staff, Valid_Session }) => {
+    // Patient
     User.hasOne(Patient, {
       foreignKey: "patientID",
       onDelete: "CASCADE",
@@ -96,6 +97,19 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: "CASCADE",
     });
 
+    // Staff
+    User.hasOne(Staff, {
+      foreignKey: "staffID",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    });
+    User.belongsTo(Staff, {
+      foreignKey: "staffID",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    });
+
+    // Sessions
     User.hasOne(Valid_Session, {
       foreignKey: "userID",
       onDelete: "CASCADE",
