@@ -2,34 +2,29 @@ const State = require("../models/index")["State"];
 
 const findState = async (options) => {
   try {
-    const stateRow = await State.findOne(options);
-    if (stateRow) return stateRow.toJSON();
-    else return null;
+    if (!options) throw new Error("Invalid options");
+    return await State.findOne(options);
   } catch (err) {
     throw err;
   }
 };
 
-const findStateID = async (state) => {
+const findStateByID = async (stateID) => {
   try {
-    if (!state) return null;
-    const stateRow = await State.findOne({ where: { state } });
-    if (!stateRow) return null;
-    return stateRow.toJSON().stateID;
+    if (!stateID) throw new Error("Invalid stateID");
+    return await State.findOne({ where: { stateID } });
   } catch (err) {
     throw err;
   }
 };
 
-const findStateName = async (stateID) => {
+const findStateByName = async (state) => {
   try {
-    if (!stateID) return null;
-    const stateRow = await State.findOne({ where: { stateID } });
-    if (!stateRow) return null;
-    return stateRow.toJSON().state;
+    if (!state) throw new Error("Invalid State");
+    return await State.findOne({ where: { state } });
   } catch (err) {
     throw err;
   }
 };
 
-module.exports = { findState, findStateID, findStateName };
+module.exports = { findState, findStateByID, findStateByName };

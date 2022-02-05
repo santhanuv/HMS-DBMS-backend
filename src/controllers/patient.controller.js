@@ -10,7 +10,7 @@ const createPatientHandler = async (req, res) => {
   const newUserID = newUser.userID;
   try {
     if (!newUser || !transaction || !newUserID) {
-      await transaction.rollback();
+      transaction && (await transaction.rollback());
       return res.sendStatus(500);
     }
 

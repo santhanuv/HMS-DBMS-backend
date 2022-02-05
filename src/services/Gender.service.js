@@ -1,25 +1,21 @@
 const Gender = require("../models/index")["Gender"];
 
-const findGenderID = async (gender) => {
+const findGenderByID = async (genderID) => {
   try {
-    if (!gender) return;
-    const genderRow = await Gender.findOne({ where: { gender } });
-    if (!genderRow) return null;
-    return genderRow.toJSON().genderID;
+    if (!genderID) throw new Error("Invalid genderID");
+    return await Gender.findOne({ where: { genderID } });
   } catch (err) {
     throw err;
   }
 };
 
-const findGenderName = async (genderID) => {
+const findGenderByName = async (gender) => {
   try {
-    if (!genderID) return;
-    const genderRow = await Gender.findOne({ where: { genderID } });
-    if (!genderRow) return null;
-    return genderRow.toJSON().gender;
+    if (!gender) throw new Error("Invalid gender");
+    return await Gender.findOne({ where: { gender } });
   } catch (err) {
     throw err;
   }
 };
 
-module.exports = { findGenderID, findGenderName };
+module.exports = { findGenderByID, findGenderByName };
