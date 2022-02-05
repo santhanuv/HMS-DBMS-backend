@@ -6,15 +6,14 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true,
     },
-    name: {
-      type: DataTypes.STRING(50),
+    department: {
+      type: DataTypes.STRING(100),
       unique: true,
       allowNull: false,
     },
   };
 
   const Department = sequelize.define("Department", departmentSchema, {
-    tableName: "department",
     timestamps: false,
   });
 
@@ -24,7 +23,11 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: "RESTRICT",
       onUpdate: "CASCADE",
     });
-    Staff.belongsTo(Department);
+    Staff.belongsTo(Department, {
+      foreignKey: "departmentID",
+      onDelete: "RESTRICT",
+      onUpdate: "CASCADE",
+    });
   };
 
   return Department;
