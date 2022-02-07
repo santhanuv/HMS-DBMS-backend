@@ -34,14 +34,5 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
   });
 
-  Previlage.associate = ({ Staff }) => {
-    Previlage.hasMany(Staff, {
-      foreignKey: "previlageID",
-      onDelete: "RESTRICT",
-      onUpdate: "CASCADE",
-    });
-    Staff.belongsTo(Previlage);
-  };
-
   return Previlage;
 };

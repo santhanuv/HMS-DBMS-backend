@@ -20,20 +20,17 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
   });
 
-  District.associate = ({ Patient, Staff }) => {
-    District.hasMany(Patient, {
+  District.associate = ({ User }) => {
+    District.hasMany(User, {
       foreignKey: "districtID",
       onDelete: "RESTRICT",
       onUpdate: "CASCADE",
     });
-    Patient.belongsTo(District);
-
-    District.hasMany(Staff, {
+    User.belongsTo(District, {
       foreignKey: "districtID",
       onDelete: "RESTRICT",
       onUpdate: "CASCADE",
     });
-    Staff.belongsTo(District);
   };
 
   return District;

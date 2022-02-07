@@ -17,20 +17,17 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
   });
 
-  Gender.associate = ({ Patient, Staff }) => {
-    Gender.hasMany(Patient, {
+  Gender.associate = ({ User }) => {
+    Gender.hasMany(User, {
       foreignKey: "genderID",
       onDelete: "Restrict",
       onUpdate: "CASCADE",
     });
-    Patient.belongsTo(Gender);
-
-    Gender.hasMany(Staff, {
+    User.belongsTo(Gender, {
       foreignKey: "genderID",
       onDelete: "Restrict",
       onUpdate: "CASCADE",
     });
-    Staff.belongsTo(Gender);
   };
 
   return Gender;

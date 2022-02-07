@@ -17,13 +17,13 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
   });
 
-  Role.associate = ({ Staff_Role }) => {
-    Role.hasMany(Staff_Role, {
+  Role.associate = ({ Staff }) => {
+    Role.hasMany(Staff, {
       foreignKey: "roleID",
       onDelete: "RESTRICT",
       onUpdate: "CASCADE",
     });
-    Staff_Role.belongsTo(Role, {
+    Staff.belongsTo(Role, {
       foreignKey: "roleID",
       onDelete: "RESTRICT",
       onUpdate: "CASCADE",

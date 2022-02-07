@@ -6,6 +6,8 @@ const sequelize = require("../models")["sequelize"];
 
 module.exports = async (req, res, next) => {
   let transaction = await sequelize.transaction();
+  // This should be false always to make sure that the user is not admin by default
+  const isAdmin = false;
   try {
     const {
       gender,
@@ -41,6 +43,8 @@ module.exports = async (req, res, next) => {
         .status(400);
     }
 
+    if (isAdmin) throw new Error("User cannot be an Admin by default");
+
     const user = {
       firstName,
       lastName,
@@ -52,6 +56,7 @@ module.exports = async (req, res, next) => {
       stateID,
       districtID,
       address,
+      isAdmin,
     };
 
     const {

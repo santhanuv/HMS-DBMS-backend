@@ -61,6 +61,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(100),
       allowNull: false,
     },
+    isAdmin: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
   };
 
   const User = sequelize.define("User", userSchema, {
@@ -103,7 +108,7 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: "CASCADE",
       onUpdate: "CASCADE",
     });
-    User.belongsTo(Staff, {
+    Staff.belongsTo(User, {
       foreignKey: "staffID",
       onDelete: "CASCADE",
       onUpdate: "CASCADE",

@@ -1,7 +1,6 @@
 const { createStaff } = require("../services/Staff.service");
 const { findDepartmentByName } = require("../services/Department.service");
 const { findRoleByName } = require("../services/Role.service");
-const { createStaffRole } = require("../services/Staff_Role.service");
 
 const createStaffHandler = async (req, res) => {
   const {
@@ -16,39 +15,29 @@ const createStaffHandler = async (req, res) => {
       return res.sendStatus(500);
     }
 
-    if (role.toLowerCase().trim() === "admin") {
-      transaction && (await transaction.rollback());
-      return res.sendStatus(403);
-    }
-
     const {
       dataValues: { departmentID, department: departmentName },
     } = await findDepartmentByName(department);
 
     const {
-      dataValues: { departmentID: omit_depart, ...newStaff },
-    } = await createStaff(
-      { staffID: newUserID, salary, departmentID },
-      { transaction }
-    );
-
-    const {
       dataValues: { roleID, role: roleName },
     } = await findRoleByName(role);
 
-    await createStaffRole(
-      { roleID, staffID: newStaff.staffID },
+    const {
+      dataValues: { departmentID: omit_depart, ...newStaff },
+    } = await createStaff(
+      { staffID: newUserID, salary, departmentID, roleID },
       { transaction }
     );
 
     const staffValues = {
       ...newUser,
       ...{ ...newStaff, department: departmentName },
-      role,
+      roleName,
     };
 
     await transaction.commit();
-    res.json(staffValues).status(200);
+    res.json(staffValues).status(201);
   } catch (err) {
     console.log(err);
     transaction && transaction.rollback();

@@ -5,9 +5,11 @@ const {
 const logger = require("../utils/logger");
 
 const createPatientHandler = async (req, res) => {
-  const { newUser, transaction } = req;
+  const {
+    newUser: { userID: newUserID, ...newUser },
+    transaction,
+  } = req;
   const { emergencyNumber } = req.body;
-  const newUserID = newUser.userID;
   try {
     if (!newUser || !transaction || !newUserID) {
       transaction && (await transaction.rollback());
@@ -26,7 +28,7 @@ const createPatientHandler = async (req, res) => {
       }
 
       await transaction.commit();
-      return res.json({ ...newUser, ...dataValues }).status(200);
+      return res.json({ ...newUser, ...dataValues }).status(201);
     } else {
       await transaction.rollback();
       res.sendStatus(400);

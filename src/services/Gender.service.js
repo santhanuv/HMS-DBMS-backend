@@ -1,5 +1,13 @@
 const Gender = require("../models/index")["Gender"];
 
+const getAllGender = async () => {
+  try {
+    return await Gender.findAll({ attributes: ["gender"] });
+  } catch (err) {
+    throw err;
+  }
+};
+
 const findGenderByID = async (genderID) => {
   try {
     if (!genderID) throw new Error("Invalid genderID");
@@ -18,4 +26,4 @@ const findGenderByName = async (gender) => {
   }
 };
 
-module.exports = { findGenderByID, findGenderByName };
+module.exports = { findGenderByID, findGenderByName, getAllGender };
