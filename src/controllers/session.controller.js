@@ -64,7 +64,6 @@ const delteSessionHandler = async (req, res) => {
   try {
     const refreshToken = req.cookies?.token;
     const user = req.user;
-
     if (!refreshToken && !user?.sessionID) return res.sendStatus(401);
 
     const verified = (refreshToken && verify(refreshToken)) || null;
