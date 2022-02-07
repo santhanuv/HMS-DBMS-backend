@@ -32,4 +32,18 @@ const findSessionByID = async (sessionID) => {
   }
 };
 
-module.exports = { createSession, findSession, findSessionByID };
+const deleteSessionByID = async (sessionID, options) => {
+  try {
+    if (!sessionID) throw new Error("Invalid sessionID");
+    return await Session.destroy({ where: { sessionID } }, options);
+  } catch (err) {
+    throw err;
+  }
+};
+
+module.exports = {
+  createSession,
+  findSession,
+  findSessionByID,
+  deleteSessionByID,
+};

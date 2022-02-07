@@ -6,8 +6,8 @@ const { findDistrictID } = require("../services/District.service");
 const getUserByIdHandler = async (req, res) => {
   const id = parseInt(req.params.id);
 
-  if (!req.userID) return res.sendStatus(401);
-  if (req.userID !== id) return res.sendStatus(403);
+  if (!req.user.userID) return res.sendStatus(401);
+  if (req.user.userID !== id) return res.sendStatus(403);
 
   try {
     const user = await findUserByID(id);

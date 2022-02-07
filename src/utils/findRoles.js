@@ -5,6 +5,9 @@ const { findIsAdmin } = require("../services/User.service");
 module.exports = async (userID, isAdmin) => {
   const roles = [];
 
+  if (userID) roles.push("User");
+  else return roles;
+
   if (isAdmin) roles.push("Admin");
   else {
     const isAdmin = await findIsAdmin(userID);
