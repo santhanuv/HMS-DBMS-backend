@@ -1,15 +1,16 @@
 const jwtUtils = require("./jwtUtils");
 process.env.NODE_ENV !== "production" && require("dotenv").config();
 const sessionService = require("../services/Session.service");
+const findRoles = require("../utils/findRoles");
 
 const accessTokenTTL = process.env.ACCESS_TOKEN_TTL;
 const refreshTokenTTL = process.env.REFRESH_TOKEN_TTL;
 
-const createAccessToken = (userID, sessionID) => {
+const createAccessToken = (userID, roles, sessionID) => {
   if (!userID || !sessionID) return false;
   try {
     return jwtUtils.sign(
-      { userID, sessionID },
+      { userID, roles, sessionID },
       { expiresIn: accessTokenTTL, algorithm: "RS256" }
     );
   } catch (e) {
@@ -38,10 +39,17 @@ const reIssueAccessToken = async (refreshToken) => {
 
     const sessionID = verifyRes.decrypt.sessionID;
     const session = await sessionService.findSessionByID(sessionID);
-    if (!session) return false;
-    const accessToken = createAccessToken(session.userID, session.sessionID);
+    if (!session || !session?.userID) return false;
 
-    return accessToken;
+    const roles = await findRoles(session.userID);
+
+    const accessToken = createAccessToken(
+      session.userID,
+      roles,
+      session.sessionID
+    );
+
+    return { accessToken, roles };
   } catch (err) {
     throw err;
   }

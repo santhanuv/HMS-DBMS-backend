@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
       allowNull: false,
     },
+    roleID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   };
 
   const Staff = sequelize.define("Staff", staffSchema, {

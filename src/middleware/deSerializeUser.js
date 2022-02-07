@@ -1,4 +1,5 @@
 const jwtUtils = require("../utils/jwtUtils");
+const { reIssueAccessToken } = require("../utils/tokens");
 
 module.exports = (req, res, next) => {
   const authHeader = req.headers.authorization || req.headers.Authorization;
@@ -13,7 +14,6 @@ module.exports = (req, res, next) => {
     req.userID = decryptedAT.decrypt.userID;
     return next();
   }
-
   req.userID = null;
   return next();
 };

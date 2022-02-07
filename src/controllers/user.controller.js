@@ -21,6 +21,8 @@ const getUserByIdHandler = async (req, res) => {
 };
 
 const createUserHandler = async (req, res) => {
+  // Should always be false to make sure that a new user can't be an admin.
+  const isAdmin = false;
   try {
     const { gender, state, district, ...rest } = req.body;
     const genderID = await findGenderID(gender);
@@ -41,6 +43,7 @@ const createUserHandler = async (req, res) => {
 
     const userObject = await createUser({
       ...rest,
+      isAdmin,
       genderID,
       stateID,
       districtID,

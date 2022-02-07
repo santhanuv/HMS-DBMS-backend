@@ -17,30 +17,33 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
   });
 
-  State.associate = ({ District, Patient, Staff }) => {
+  State.associate = ({ District, User }) => {
     const districtOptions = {
       foreignKey: "stateID",
       onDelete: "CASCADE",
       onUpdate: "CASCADE",
     };
-    State.hasMany(District, districtOptions);
-    District.belongsTo(State, districtOptions);
+    State.hasMany(District, {
+      foreignKey: "stateID",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    });
+    District.belongsTo(State, {
+      foreignKey: "stateID",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    });
 
-    const patientOptions = {
+    State.hasMany(User, {
       foreignKey: "stateID",
       onDelete: "RESTRICT",
       onUpdate: "CASCADE",
-    };
-    State.hasMany(Patient, patientOptions);
-    Patient.belongsTo(State, patientOptions);
-
-    const staffOptions = {
+    });
+    User.belongsTo(State, {
       foreignKey: "stateID",
       onDelete: "RESTRICT",
       onUpdate: "CASCADE",
-    };
-    State.hasMany(Staff, staffOptions);
-    Staff.belongsTo(State, staffOptions);
+    });
   };
 
   return State;

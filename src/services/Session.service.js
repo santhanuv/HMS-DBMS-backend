@@ -1,9 +1,9 @@
 const Session = require("../models/index")["Valid_Session"];
 
-const createSession = async (userID, userAgent = "") => {
+const createSession = async (userID, userAgent = "", options) => {
   try {
     if (!userID) return -1;
-    const session = await Session.create({ userID, userAgent });
+    const session = await Session.create({ userID, userAgent }, options);
     if (!session) return null;
     return session.toJSON();
   } catch (err) {

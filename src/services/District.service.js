@@ -1,9 +1,26 @@
 const District = require("../models/index")["District"];
+const State = require("../models/index")["State"];
 
 const findDistrict = async (options) => {
   try {
     if (!options) throw new Error("Invalid options");
     return await District.findAll(options);
+  } catch (err) {
+    throw err;
+  }
+};
+
+const getAllDistricts = async () => {
+  try {
+    return await District.findAll({
+      include: [
+        {
+          model: State,
+          attributes: ["state"],
+        },
+      ],
+      attributes: ["district"],
+    });
   } catch (err) {
     throw err;
   }
@@ -30,4 +47,9 @@ const findDistrictByName = async (district, stateID) => {
   }
 };
 
-module.exports = { findDistrict, findDistrictByID, findDistrictByName };
+module.exports = {
+  findDistrict,
+  findDistrictByID,
+  findDistrictByName,
+  getAllDistricts,
+};

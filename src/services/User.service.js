@@ -2,7 +2,7 @@ const User = require("../models/index")["User"];
 
 const createUser = async (user, options) => {
   try {
-    if (!user) return;
+    if (!user) throw new Error("Invalid user data");
     return await User.create(user, options);
   } catch (err) {
     throw err;
@@ -20,6 +20,7 @@ const findUser = async (options) => {
 
 const findUserByID = async (userID) => {
   try {
+    if (!userID) throw new Error("Invalid userID");
     return await User.findOne({ where: { userID } });
   } catch (err) {
     throw err;
@@ -27,10 +28,22 @@ const findUserByID = async (userID) => {
 };
 
 const findUserByEmail = async (email) => {
+  if (!email) throw new Error("Invalid userID");
   try {
     return await User.findOne({
       where: { email },
     });
+  } catch (err) {
+    throw err;
+  }
+};
+
+const findIsAdmin = async (userID) => {
+  try {
+    if (!userID) throw new Error("Invalid userID");
+    const user = await User.findOne({ where: { userID } });
+    if (user.dataValues.isAdmin) return true;
+    else return false;
   } catch (err) {
     throw err;
   }
@@ -59,12 +72,15 @@ const validateUser = async (email, password) => {
     const user = await User.scope("includePassword").findOne({
       where: { email },
     });
+
+    if (!user) return false;
     const isValid = await user.validatePassword(password);
     if (isValid) {
-      const { userID, ...rest } = user.toJSON();
-      return userID;
+      const { userID, isAdmin, ...rest } = user.toJSON();
+      return { userID, isAdmin };
     } else return false;
   } catch (err) {
+    console.log(err);
     throw err;
   }
 };
@@ -77,4 +93,5 @@ module.exports = {
   findUserByID,
   findUserByEmail,
   validateUser,
+  findIsAdmin,
 };
