@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const credentials = require("./middleware/credentials");
 const cors = require("cors");
 const corsOptions = require("./config/cors/corsOptions");
+const logEvents = require("./middleware/logEvents");
 
 const app = express();
 const env = process.env;
@@ -20,6 +21,7 @@ async function start() {
     app.use(cookieParser());
     app.use(credentials);
     app.use(cors(corsOptions));
+    app.use(logEvents);
     app.use(require("./middleware/deSerializeUser"));
 
     require("./routes/index")(app);

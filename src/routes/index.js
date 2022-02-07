@@ -4,6 +4,7 @@ const sessionRouter = require("../routes/session.route");
 const staffRouter = require("../routes/staff.route");
 const districtRotuer = require("../routes/district.route");
 const genderRouter = require("../routes/gender.route");
+const rolesRouter = require("../routes/roles.route");
 
 module.exports = (app) => {
   app.use("/patients", patientRouter);
@@ -12,4 +13,5 @@ module.exports = (app) => {
   app.use("/staffs", staffRouter);
   app.use("/districts", districtRotuer);
   app.use("/genders", genderRouter);
+  app.use("/roles", rolesRouter);
 };

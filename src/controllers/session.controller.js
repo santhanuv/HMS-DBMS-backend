@@ -1,5 +1,8 @@
 const ms = require("ms");
-const { createSession } = require("../services/Session.service");
+const {
+  createSession,
+  deleteSessionByID,
+} = require("../services/Session.service");
 const { validateUser } = require("../services/User.service");
 const findRoles = require("../utils/findRoles");
 const sequelize = require("../models")["sequelize"];
@@ -8,6 +11,7 @@ const {
   createRefreshToken,
   reIssueAccessToken,
 } = require("../utils/tokens");
+const { verify } = require("../utils/jwtUtils");
 process.env.NODE_ENV !== "production" && require("dotenv").config();
 
 const createSessionHandler = async (req, res) => {
@@ -29,17 +33,16 @@ const createSessionHandler = async (req, res) => {
     }
 
     const roles = await findRoles(userID, isAdmin);
+    if (roles.length === 0) {
+      console.log("Unable to find the roles");
+      return res.sendStatus(500);
+    }
 
     const accessToken = createAccessToken(userID, roles, session.sessionID);
     const refreshToken = createRefreshToken(session.sessionID);
     if (!refreshToken || !accessToken) {
       throw new Error("Unable to create accessToken or RefreshToken");
     }
-
-    res.cookie("text", "working", {
-      sameSite: "none",
-      secure: true,
-    });
 
     res.cookie("token", refreshToken, {
       httpOnly: true,
@@ -57,10 +60,31 @@ const createSessionHandler = async (req, res) => {
   }
 };
 
+const delteSessionHandler = async (req, res) => {
+  try {
+    const refreshToken = req.cookies?.token;
+    const user = req.user;
+    if (!refreshToken && !user?.sessionID) return res.sendStatus(401);
+
+    const verified = (refreshToken && verify(refreshToken)) || null;
+    const sessionID =
+      (verified?.valid && verified?.decrypt?.sessionID) || user?.sessionID;
+
+    if (!sessionID) return res.sendStatus(401);
+    const isDeleted = await deleteSessionByID(sessionID);
+    if (!isDeleted) throw new Error("Unable to logout");
+
+    if (!verified.valid) return res.sendStatus(401);
+    else return res.sendStatus(204);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
+};
+
 const refreshTokenHandler = async (req, res) => {
   try {
     const refreshToken = req.cookies?.token;
-    console.log(req.cookies.token);
     const { accessToken, roles } = await reIssueAccessToken(refreshToken);
     if (!accessToken) return res.sendStatus(401);
     return res.status(200).json({ accessToken, roles });
@@ -69,4 +93,8 @@ const refreshTokenHandler = async (req, res) => {
   }
 };
 
-module.exports = { createSessionHandler, refreshTokenHandler };
+module.exports = {
+  createSessionHandler,
+  refreshTokenHandler,
+  delteSessionHandler,
+};
