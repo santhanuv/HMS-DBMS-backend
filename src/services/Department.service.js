@@ -1,5 +1,13 @@
 const Department = require("../models")["Department"];
 
+const getAllDepartments = async () => {
+  try {
+    return await Department.findAll({ attributes: ["department"] });
+  } catch (err) {
+    throw err;
+  }
+};
+
 const findDepartmentByID = async (departmentID) => {
   try {
     if (!departmentID) throw new Error("Invalid Department ID");
@@ -18,4 +26,8 @@ const findDepartmentByName = async (department) => {
   }
 };
 
-module.exports = { findDepartmentByID, findDepartmentByName };
+module.exports = {
+  findDepartmentByID,
+  findDepartmentByName,
+  getAllDepartments,
+};

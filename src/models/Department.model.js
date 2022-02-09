@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
   });
 
-  Department.associate = ({ Staff }) => {
+  Department.associate = ({ Staff, Staff_Invite }) => {
     Department.hasMany(Staff, {
       foreignKey: "departmentID",
       onDelete: "RESTRICT",
@@ -26,6 +26,17 @@ module.exports = (sequelize, DataTypes) => {
     Staff.belongsTo(Department, {
       foreignKey: "departmentID",
       onDelete: "RESTRICT",
+      onUpdate: "CASCADE",
+    });
+
+    Department.hasMany(Staff_Invite, {
+      foreignKey: "departmentID",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    });
+    Staff_Invite.belongsTo(Department, {
+      foreignKey: "departmentID",
+      onDelete: "CASCADE",
       onUpdate: "CASCADE",
     });
   };

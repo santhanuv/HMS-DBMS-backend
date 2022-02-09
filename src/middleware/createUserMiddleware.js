@@ -43,6 +43,8 @@ module.exports = async (req, res, next) => {
         .status(400);
     }
 
+    console.log("creating");
+
     if (isAdmin) throw new Error("User cannot be an Admin by default");
 
     const user = {
