@@ -11,11 +11,10 @@ const createSession = async (userID, userAgent = "", options) => {
   }
 };
 
-const findSession = async (options) => {
+const findSessions = async (options) => {
   try {
-    if (!options) return;
-    const session = await Session.findOne(options);
-    return JSON.stringify(session);
+    if (!options) throw new Error("No options given");
+    return await Session.findAll(options);
   } catch (err) {
     throw err;
   }
@@ -43,7 +42,7 @@ const deleteSessionByID = async (sessionID, options) => {
 
 module.exports = {
   createSession,
-  findSession,
+  findSessions,
   findSessionByID,
   deleteSessionByID,
 };

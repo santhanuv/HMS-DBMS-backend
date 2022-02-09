@@ -3,6 +3,6 @@ const router = require("express").Router();
 
 router.post("/", sessionController.createSessionHandler);
 router.get("/refresh-token", sessionController.refreshTokenHandler);
-router.delete("/", sessionController.delteSessionHandler);
+router.delete("/", sessionController.deleteSessionHandler);
 
 module.exports = router;

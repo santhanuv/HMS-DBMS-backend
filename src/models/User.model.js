@@ -115,7 +115,7 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     // Sessions
-    User.hasOne(Valid_Session, {
+    User.hasMany(Valid_Session, {
       foreignKey: "userID",
       onDelete: "CASCADE",
       onUpdate: "CASCADE",
