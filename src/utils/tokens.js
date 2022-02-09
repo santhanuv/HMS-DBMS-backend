@@ -5,10 +5,11 @@ const findRoles = require("../utils/findRoles");
 
 const accessTokenTTL = process.env.ACCESS_TOKEN_TTL;
 const refreshTokenTTL = process.env.REFRESH_TOKEN_TTL;
+const inviteTokenTTL = process.env.INVITE_TOKEN_TTL;
 
 const createAccessToken = (userID, roles, sessionID) => {
-  if (!userID || !sessionID) return false;
   try {
+    if (!userID || !sessionID) throw new Error("No user ID or session ID");
     return jwtUtils.sign(
       { userID, roles, sessionID },
       { expiresIn: accessTokenTTL, algorithm: "RS256" }
@@ -19,8 +20,8 @@ const createAccessToken = (userID, roles, sessionID) => {
 };
 
 const createRefreshToken = (sessionID) => {
-  if (!sessionID) return false;
   try {
+    if (!sessionID) throw new Error("No session ID");
     return jwtUtils.sign(
       { sessionID },
       { expiresIn: refreshTokenTTL, algorithm: "RS256" }
@@ -32,7 +33,7 @@ const createRefreshToken = (sessionID) => {
 
 const reIssueAccessToken = async (refreshToken) => {
   try {
-    if (!refreshToken) return false;
+    if (!refreshToken) throw new Error("No refresh token");
 
     verifyRes = jwtUtils.verify(refreshToken);
     if (!verifyRes?.valid) return false;
@@ -55,4 +56,21 @@ const reIssueAccessToken = async (refreshToken) => {
   }
 };
 
-module.exports = { createAccessToken, createRefreshToken, reIssueAccessToken };
+const createInviteToken = (email) => {
+  try {
+    if (!email) throw new Error("Invalid email or role");
+    return jwtUtils.sign(
+      { email },
+      { expiresIn: inviteTokenTTL, algorithm: "RS256" }
+    );
+  } catch (err) {
+    throw err;
+  }
+};
+
+module.exports = {
+  createAccessToken,
+  createRefreshToken,
+  reIssueAccessToken,
+  createInviteToken,
+};

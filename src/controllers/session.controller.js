@@ -1,7 +1,9 @@
+const User = require("../models/index")["User"];
 const ms = require("ms");
 const {
   createSession,
   deleteSessionByID,
+  findSessions,
 } = require("../services/Session.service");
 const { validateUser } = require("../services/User.service");
 const findRoles = require("../utils/findRoles");
@@ -15,6 +17,33 @@ const { verify } = require("../utils/jwtUtils");
 process.env.NODE_ENV !== "production" && require("dotenv").config();
 
 const createSessionHandler = async (req, res) => {
+  try {
+    const userAgent = req.get("User-Agent");
+    if (req.body.email && userAgent) {
+      const [session] = await findSessions({
+        include: {
+          model: User,
+          attributes: [],
+          where: { email: req.body.email },
+        },
+        attributes: ["sessionID"],
+        where: { userAgent: `${userAgent}` },
+      });
+      if (session?.dataValues) {
+        const deleRes = await deleteSessionByID(session.dataValues?.sessionID);
+        console.log(
+          "Session Deleted: sessionID: ",
+          session.dataValues?.sessionID,
+          " Result: ",
+          deleRes
+        );
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    return res.json({ msg: "Unable to relogin" }).status(500);
+  }
+
   const transaction = await sequelize.transaction();
   try {
     const { email, password } = req.body;
@@ -60,7 +89,7 @@ const createSessionHandler = async (req, res) => {
   }
 };
 
-const delteSessionHandler = async (req, res) => {
+const deleteSessionHandler = async (req, res) => {
   try {
     const refreshToken = req.cookies?.token;
     const user = req.user;
@@ -96,5 +125,5 @@ const refreshTokenHandler = async (req, res) => {
 module.exports = {
   createSessionHandler,
   refreshTokenHandler,
-  delteSessionHandler,
+  deleteSessionHandler,
 };

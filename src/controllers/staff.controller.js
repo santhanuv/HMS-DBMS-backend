@@ -1,6 +1,19 @@
+const ms = require("ms");
+const { verify } = require("../utils/jwtUtils");
 const { createStaff } = require("../services/Staff.service");
 const { findDepartmentByName } = require("../services/Department.service");
 const { findRoleByName } = require("../services/Role.service");
+const { createInviteToken } = require("../utils/tokens");
+const {
+  createStaffInvite,
+  getStaffInvite,
+  updateStaffInvite,
+} = require("../services/Staff_Invite.service");
+const sendMail = require("../utils/sendMails");
+
+process.env.NODE_ENV !== "production" && require("dotenv").config();
+const inviteTokenTTL = process.env.INVITE_TOKEN_TTL;
+const accessTokenTTl = process.env.ACCESS_TOKEN_TTL;
 
 const createStaffHandler = async (req, res) => {
   const {
@@ -45,4 +58,78 @@ const createStaffHandler = async (req, res) => {
   }
 };
 
-module.exports = { createStaffHandler };
+const InviteStaffHandler = async (req, res) => {
+  try {
+    console.log("Inviting Staff");
+
+    if (req?.user?.roles?.indexOf("Admin") === -1) return res.sendStatus(401);
+    const { email, role, department, salary } = req.body;
+
+    const roleObject = await findRoleByName(role);
+    const departmentObj = await findDepartmentByName(department);
+
+    if (!roleObject?.dataValues || !departmentObj?.dataValues)
+      return res.sendStatus(400);
+
+    const { roleID, role: roleName } = roleObject.dataValues;
+    const { departmentID, department: departmentName } =
+      departmentObj.dataValues;
+
+    const token = createInviteToken(email);
+    if (!token) throw new Error("Unable to create Invite token");
+
+    const staffInvite = { email, roleID, token, departmentID, salary };
+
+    const { dataValues } = await createStaffInvite(staffInvite);
+
+    if (!dataValues) return res.sendStatus(500);
+
+    const confirmUrl = `http://localhost:3000/confirmation/staff/${token}`;
+
+    const mail = {
+      from: "Hospital Name <hospitalName@email.com>",
+      to: `${email}`,
+      subject: "Join our hospital as a staff.",
+      text: `Click the link to confirm and create your staff account for Hospital Name\nLink: <a href="${confirmUrl}">${confirmUrl}</a>\n`,
+      html: `<h1>Click the link to confirm and create your staff account for Hospital Name</h1><br><a href="${confirmUrl}">${confirmUrl}</a>`,
+    };
+
+    sendMail(mail);
+
+    res.json({ msg: "Confirmation mail send to the user" }).status(200);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
+};
+
+const confirmInvitation = async (req, res) => {
+  try {
+    const token = req.params.token;
+
+    if (!token) return res.sendStatus(401);
+
+    const { valid, decrypt } = verify(token);
+    const invitedEmail = decrypt?.email;
+
+    if (!valid || !invitedEmail) return res.sendStatus(401);
+    const updatedRows = await updateStaffInvite(invitedEmail, {
+      isConfirmed: true,
+    });
+    if (!updatedRows) return res.sendStatus(401);
+
+    res.cookie("staff-reg-token", token, {
+      httpOnly: true,
+      maxAge: ms(`${inviteTokenTTL}`),
+      sameSite: "none",
+      secure: true,
+    });
+
+    res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
+};
+
+module.exports = { createStaffHandler, InviteStaffHandler, confirmInvitation };

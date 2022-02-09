@@ -20,5 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     tableName: "Valid_Sessions",
   });
 
+  const queryInterface = sequelize.getQueryInterface();
+
   return ValidSession;
 };
