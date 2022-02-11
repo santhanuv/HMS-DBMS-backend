@@ -1,9 +1,10 @@
 const ms = require("ms");
 const { verify } = require("../utils/jwtUtils");
-const { createStaff } = require("../services/Staff.service");
+const { createStaff, getStaffsByRole } = require("../services/Staff.service");
 const { findDepartmentByName } = require("../services/Department.service");
 const { findRoleByName } = require("../services/Role.service");
 const { createInviteToken } = require("../utils/tokens");
+const { getAllDepartments } = require("../services/Department.service");
 const {
   createStaffInvite,
   getStaffInvite,
@@ -132,4 +133,44 @@ const confirmInvitation = async (req, res) => {
   }
 };
 
-module.exports = { createStaffHandler, InviteStaffHandler, confirmInvitation };
+const getDoctorsHandler = async (req, res) => {
+  try {
+    if (!req.user) return res.sendStatus(401);
+
+    const role = await findRoleByName("Doctor");
+    if (!role?.dataValues?.roleID) throw new Error("No Doctor Role found");
+    const roleID = role.dataValues.roleID;
+
+    const doctorDptObj = await getAllDepartments();
+    const doctorDpts = doctorDptObj.map(({ dataValues }) => dataValues);
+
+    const doctors = await getStaffsByRole(roleID);
+    const dptDocs = {};
+
+    doctors &&
+      doctors.forEach(
+        ({ dataValues: docValue, dataValues: { User: userValue } }) => {
+          const departmentName = doctorDpts.find(
+            (dpt) => dpt.departmentID === docValue.departmentID
+          )["department"];
+          const doctorName = `${userValue.firstName} ${userValue.lastName}`;
+          const doctorID = docValue.staffID;
+          dptDocs[departmentName] = dptDocs[departmentName]
+            ? dptDocs[departmentName].push({ name: doctorName, id: doctorID })
+            : [{ name: doctorName, id: doctorID }];
+        }
+      );
+
+    return res.status(200).json(dptDocs);
+  } catch (err) {
+    console.log(err);
+    return res.sendStatus(500);
+  }
+};
+
+module.exports = {
+  createStaffHandler,
+  InviteStaffHandler,
+  confirmInvitation,
+  getDoctorsHandler,
+};

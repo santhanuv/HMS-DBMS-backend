@@ -11,8 +11,7 @@ const createUser = async (user, options) => {
 
 const findUser = async (options) => {
   try {
-    const users = await User.findAll(options);
-    return JSON.stringify(users);
+    return await User.findAll(options);
   } catch (err) {
     throw err;
   }

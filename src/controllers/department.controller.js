@@ -2,8 +2,7 @@ const { getAllDepartments } = require("../services/Department.service");
 
 const getAllDepartmentsHandler = async (req, res) => {
   try {
-    if (!req.user) res.sendStatus(401);
-    if (req.user.roles.indexOf("Admin") === -1) res.sendStatus(403);
+    if (!req.user) return res.sendStatus(401);
 
     const dptObjs = await getAllDepartments();
     let departments = [];

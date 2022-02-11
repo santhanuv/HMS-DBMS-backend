@@ -1,4 +1,5 @@
 const Staff = require("../models")["Staff"];
+const User = require("../models")["User"];
 
 const createStaff = async (values, options) => {
   try {
@@ -30,4 +31,34 @@ const findStaffByID = async (staffID) => {
   }
 };
 
-module.exports = { createStaff, findStaffByID, findStaffRole };
+const findStaff = async (options) => {
+  try {
+    if (!options) throw new Error("Invalid options");
+    return await Staff.findAll(options);
+  } catch (err) {
+    throw err;
+  }
+};
+
+const getStaffsByRole = async (roleID) => {
+  try {
+    if (!roleID) throw new Error("Invalid role");
+    return await Staff.findAll({
+      include: {
+        model: User,
+        attributes: ["firstName", "lastName"],
+      },
+      where: { roleID },
+    });
+  } catch (err) {
+    throw err;
+  }
+};
+
+module.exports = {
+  createStaff,
+  findStaffByID,
+  findStaffRole,
+  findStaff,
+  getStaffsByRole,
+};

@@ -2,7 +2,7 @@ const Department = require("../models")["Department"];
 
 const getAllDepartments = async () => {
   try {
-    return await Department.findAll({ attributes: ["department"] });
+    return await Department.findAll();
   } catch (err) {
     throw err;
   }

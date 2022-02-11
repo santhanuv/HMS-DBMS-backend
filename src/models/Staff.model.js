@@ -22,5 +22,18 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
   });
 
+  Staff.associate = ({ Appointment }) => {
+    Staff.hasMany(Appointment, {
+      foreignKey: "doctorID",
+      onDelete: "RESTRICT",
+      onUpdate: "CASCADE",
+    });
+    Appointment.belongsTo(Staff, {
+      foreignKey: "doctorID",
+      onDelete: "RESTRICT",
+      onUpdate: "CASCADE",
+    });
+  };
+
   return Staff;
 };

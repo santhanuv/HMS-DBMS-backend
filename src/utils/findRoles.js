@@ -17,8 +17,11 @@ module.exports = async (userID, isAdmin) => {
   const patient = await findPatientByID(userID);
   patient && roles.push("Patient");
 
-  const { staff, role: staffRole } = await findStaffRole(userID);
-  staff && staffRole && roles.push(staffRole);
+  const { role } = await findStaffRole(userID);
+  if (role) {
+    const { role: staffRole } = role.dataValues;
+    staffRole && roles.push(staffRole);
+  }
 
   return roles;
 };

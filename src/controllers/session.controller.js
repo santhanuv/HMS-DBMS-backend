@@ -62,6 +62,7 @@ const createSessionHandler = async (req, res) => {
     }
 
     const roles = await findRoles(userID, isAdmin);
+    console.log("finded roles: ", roles);
     if (roles.length === 0) {
       console.log("Unable to find the roles");
       return res.sendStatus(500);
