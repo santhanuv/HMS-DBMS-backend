@@ -18,14 +18,18 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATEONLY,
       allowNull: false,
     },
-    time: {
-      type: DataTypes.TIME,
+    timeSlotID: {
+      type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    isCompleted: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
   };
 
   const Appointment = sequelize.define("Appointment", appointmentSchema, {
-    tableName: "appointment",
     timestamps: false,
   });
 

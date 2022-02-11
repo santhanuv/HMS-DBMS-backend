@@ -21,7 +21,11 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: "CASCADE",
       onUpdate: "CASCADE",
     });
-    Appointment.belongsTo(Patient);
+    Appointment.belongsTo(Patient, {
+      foreignKey: "patientID",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    });
 
     Patient.hasOne(Inpatient, {
       foreignKey: "patientID",

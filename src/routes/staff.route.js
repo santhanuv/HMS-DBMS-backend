@@ -13,5 +13,6 @@ router.post(
 router.post("/invitation", staffController.InviteStaffHandler);
 router.get("/confirmation/:token", staffController.confirmInvitation);
 router.get("/departments", departmentController.getAllDepartmentsHandler);
+router.get("/doctors", staffController.getDoctorsHandler);
 
 module.exports = router;
