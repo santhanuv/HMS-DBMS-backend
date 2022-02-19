@@ -61,6 +61,10 @@ const createAppointmentHandler = async (req, res) => {
   }
 };
 
+const getAppointmentWithDate = async (req, res) => {
+  const date = req.date;
+};
+
 const getLatestAppointments = async (req, res) => {};
 
 module.exports = { createAppointmentHandler };
