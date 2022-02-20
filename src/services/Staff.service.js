@@ -22,10 +22,10 @@ const findStaffRole = async (staffID) => {
   }
 };
 
-const findStaffByID = async (staffID) => {
+const findStaffByID = async (staffID, options) => {
   try {
     if (!staffID) throw new Error("Invalid staffID");
-    return await Staff.findOne({ where: { staffID } });
+    return await Staff.findOne({ options, where: { staffID } });
   } catch (err) {
     throw err;
   }

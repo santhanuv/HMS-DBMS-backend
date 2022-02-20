@@ -46,7 +46,7 @@ const createSessionHandler = async (req, res) => {
 
   const transaction = await sequelize.transaction();
   try {
-    const { email, password } = req.body;
+    const { email, password, role: requiredRole } = req.body;
     const userAgent = req.get("User-Agent") || "";
     const { userID, isAdmin } = await validateUser(email, password);
 
@@ -66,6 +66,11 @@ const createSessionHandler = async (req, res) => {
     if (roles.length === 0) {
       console.log("Unable to find the roles");
       return res.sendStatus(500);
+    }
+
+    if (roles.indexOf(requiredRole) === -1) {
+      await transaction.rollback();
+      return res.sendStatus(401);
     }
 
     const accessToken = createAccessToken(userID, roles, session.sessionID);

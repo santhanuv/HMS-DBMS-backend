@@ -33,28 +33,28 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
   });
 
-  Appointment.associate = ({ Diagnosis, Invoice, AppointmentMedication }) => {
-    Appointment.hasOne(Diagnosis, {
-      foreignKey: "appointmentID",
-      onDelete: "CASCADE",
-      onUpdate: "CASCADE",
-    });
-    Diagnosis.belongsTo(Appointment);
+  // Appointment.associate = ({ Diagnosis, Invoice, AppointmentMedication }) => {
+  //   Appointment.hasOne(Diagnosis, {
+  //     foreignKey: "appointmentID",
+  //     onDelete: "CASCADE",
+  //     onUpdate: "CASCADE",
+  //   });
+  //   Diagnosis.belongsTo(Appointment);
 
-    Appointment.hasOne(Invoice, {
-      foreignKey: "appointmentID",
-      onDelete: "RESTRICT",
-      onUpdate: "CASCADE",
-    });
-    Invoice.belongsTo(Appointment);
+  //   Appointment.hasOne(Invoice, {
+  //     foreignKey: "appointmentID",
+  //     onDelete: "RESTRICT",
+  //     onUpdate: "CASCADE",
+  //   });
+  //   Invoice.belongsTo(Appointment);
 
-    Appointment.hasMany(AppointmentMedication, {
-      foreignKey: "appointmentID",
-      onDelete: "CASCADE",
-      onUpdate: "CASCADE",
-    });
-    AppointmentMedication.belongsTo(Appointment);
-  };
+  //   Appointment.hasMany(AppointmentMedication, {
+  //     foreignKey: "appointmentID",
+  //     onDelete: "CASCADE",
+  //     onUpdate: "CASCADE",
+  //   });
+  //   AppointmentMedication.belongsTo(Appointment);
+  // };
 
   return Appointment;
 };
