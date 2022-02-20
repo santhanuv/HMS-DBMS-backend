@@ -9,6 +9,9 @@ const atsRouter = require("../routes/ATS.route");
 const appointmentRouter = require("../routes/appointment.route");
 
 module.exports = (app) => {
+  app.get("/", (req, res) => {
+    res.send("Welcome To HMS-DBMS");
+  });
   app.use("/patients", patientRouter);
   app.use("/users", userRouter);
   app.use("/sessions", sessionRouter);
