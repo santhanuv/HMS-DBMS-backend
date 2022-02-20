@@ -17,10 +17,10 @@ const findUser = async (options) => {
   }
 };
 
-const findUserByID = async (userID) => {
+const findUserByID = async (userID, options) => {
   try {
     if (!userID) throw new Error("Invalid userID");
-    return await User.findOne({ where: { userID } });
+    return await User.findOne({ options, where: { userID } });
   } catch (err) {
     throw err;
   }

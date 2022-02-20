@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
   });
 
-  Patient.associate = ({ Appointment, Inpatient }) => {
+  Patient.associate = ({ Appointment }) => {
     Patient.hasMany(Appointment, {
       foreignKey: "patientID",
       onDelete: "CASCADE",
@@ -26,13 +26,6 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: "CASCADE",
       onUpdate: "CASCADE",
     });
-
-    Patient.hasOne(Inpatient, {
-      foreignKey: "patientID",
-      onDelete: "CASCADE",
-      onUpdate: "CASCADE",
-    });
-    Inpatient.belongsTo(Patient);
   };
 
   return Patient;

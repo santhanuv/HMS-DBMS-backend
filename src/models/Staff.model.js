@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
   });
 
-  Staff.associate = ({ Appointment }) => {
+  Staff.associate = ({ Appointment, Appointment_Charge }) => {
     Staff.hasMany(Appointment, {
       foreignKey: "doctorID",
       onDelete: "RESTRICT",
@@ -31,6 +31,17 @@ module.exports = (sequelize, DataTypes) => {
     Appointment.belongsTo(Staff, {
       foreignKey: "doctorID",
       onDelete: "RESTRICT",
+      onUpdate: "CASCADE",
+    });
+
+    Staff.hasOne(Appointment_Charge, {
+      foreignKey: "doctorID",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    });
+    Appointment_Charge.belongsTo(Staff, {
+      foreignKey: "doctorID",
+      onDelete: "CASCADE",
       onUpdate: "CASCADE",
     });
   };
