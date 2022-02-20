@@ -1,5 +1,5 @@
 process.env.NODE_ENV !== "production" && require("dotenv").config();
-const logger = require("../utils/logger");
+// const logger = require("../utils/logger");
 const env = process.env;
 
 module.exports = {
@@ -10,7 +10,8 @@ module.exports = {
     options: {
       host: env.DB_HOST,
       dialect: "mysql",
-      logging: (msg) => logger.info(msg),
+      // logging: (msg) => logger.info(msg),
+      logging: (msg) => console.log(msg),
       pool: {
         max: 5,
         min: 0,
@@ -26,7 +27,8 @@ module.exports = {
     options: {
       host: env.DB_HOST,
       dialect: "mysql",
-      logging: (msg) => logger.info(msg),
+      // logging: (msg) => logger.info(msg),
+      logging: (msg) => console.log(msg),
       pool: {
         max: 5,
         min: 0,

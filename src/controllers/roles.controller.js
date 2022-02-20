@@ -1,5 +1,5 @@
 const { getAllRoles } = require("../services/Roles.service");
-const logger = require("../utils/logger");
+// const logger = require("../utils/logger");
 
 const getAllRolesHandler = async (req, res) => {
   try {
@@ -10,7 +10,8 @@ const getAllRolesHandler = async (req, res) => {
     const roleValues = roles.map(({ dataValues }) => dataValues.role);
     res.status(200).json(roleValues);
   } catch (err) {
-    logger.error(err);
+    // logger.error(err);
+    console.error(err);
     res.sendStatus(500);
   }
 };
