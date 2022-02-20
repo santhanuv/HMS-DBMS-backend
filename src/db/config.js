@@ -1,5 +1,5 @@
 process.env.NODE_ENV !== "production" && require("dotenv").config();
-const logger = require("../utils/logger");
+// const logger = require("../utils/logger");
 const env = process.env;
 
 module.exports = {
