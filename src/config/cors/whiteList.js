@@ -1,1 +1,4 @@
-module.exports = ["http://localhost:3000", "https://hms-dbms.herokuapp.com"];
+module.exports = [
+  "http://localhost:3000",
+  `https://hms-dbms.herokuapp.com:${process.env.PORT}`,
+];
