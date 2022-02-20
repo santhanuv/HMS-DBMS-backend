@@ -10,7 +10,7 @@ module.exports = {
     options: {
       host: env.DB_HOST,
       dialect: "mysql",
-      logging: (msg) => logger.info(msg),
+      logging: (msg) => console.log(msg),
       pool: {
         max: 5,
         min: 0,
@@ -26,7 +26,7 @@ module.exports = {
     options: {
       host: env.DB_HOST,
       dialect: "mysql",
-      logging: (msg) => logger.info(msg),
+      logging: (msg) => console.log(msg),
       pool: {
         max: 5,
         min: 0,

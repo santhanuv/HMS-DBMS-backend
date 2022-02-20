@@ -2,7 +2,7 @@ const {
   createPatient,
   deletePatientByID,
 } = require("../services/Patient.service");
-const logger = require("../utils/logger");
+// const logger = require("../utils/logger");
 
 const createPatientHandler = async (req, res) => {
   const {
@@ -44,14 +44,16 @@ const deletePatientHandler = async (req, res) => {
   try {
     const result = await deletePatientByID(1);
   } catch (err) {
-    logger.error(err);
+    // logger.error(err);
+    console.error(err);
   }
 };
 
 const findPatientHandler = async (req, res) => {
   try {
   } catch (err) {
-    logger.error(err);
+    // logger.error(err);
+    console.error(err);
   }
 };
 

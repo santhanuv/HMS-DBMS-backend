@@ -1,6 +1,6 @@
 process.env.NODE_ENV !== "production" && require("dotenv").config();
 const express = require("express");
-const logger = require("./utils/logger");
+// const logger = require("./utils/logger");
 const dbConnect = require("./db/dbConnect");
 const cookieParser = require("cookie-parser");
 const credentials = require("./middleware/credentials");
@@ -14,7 +14,8 @@ const env = process.env;
 async function start() {
   try {
     app.listen(env.PORT || 5000, () =>
-      logger.info(`Server started at http://${env.HOST}:${env.PORT}`)
+      // logger.info(`Server started at http://${env.HOST}:${env.PORT}`)
+      console.log(`Server started at http://${env.HOST}:${env.PORT}`)
     );
     app.use(express.urlencoded({ extended: false }));
     app.use(express.json());
@@ -26,7 +27,8 @@ async function start() {
 
     require("./routes/index")(app);
   } catch (e) {
-    logger.fatal(`SERVER CRASHED - ERROR: ${e.message}\n ${e.stack}`);
+    // logger.fatal(`SERVER CRASHED - ERROR: ${e.message}\n ${e.stack}`);
+    console.error(`SERVER CRASHED - ERROR: ${e.message}\n ${e.stack}`);
   }
 }
 

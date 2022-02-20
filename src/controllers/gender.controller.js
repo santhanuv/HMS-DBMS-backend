@@ -7,7 +7,7 @@ const getAllGenderHandler = async (req, res) => {
     console.log(genderList);
     res.json(genderList).status(200);
   } catch (err) {
-    logger.error(err.stack);
+    console.error(err.stack);
     res.sendStatus(500);
   }
 };
