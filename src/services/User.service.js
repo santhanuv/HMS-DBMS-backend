@@ -75,8 +75,8 @@ const validateUser = async (email, password) => {
     if (!user) return false;
     const isValid = await user.validatePassword(password);
     if (isValid) {
-      const { userID, isAdmin, ...rest } = user.toJSON();
-      return { userID, isAdmin };
+      const { userID, isAdmin, firstName, lastName, ...rest } = user.toJSON();
+      return { userID, isAdmin, firstName, lastName };
     } else return false;
   } catch (err) {
     console.log(err);

@@ -48,7 +48,7 @@ const createSessionHandler = async (req, res) => {
   try {
     const { email, password, role: requiredRole } = req.body;
     const userAgent = req.get("User-Agent") || "";
-    const { userID, isAdmin } = await validateUser(email, password);
+    const { userID, isAdmin, firstName, lastName } = await validateUser(email, password);
 
     if (!userID) {
       // error
@@ -87,7 +87,7 @@ const createSessionHandler = async (req, res) => {
     });
 
     await transaction.commit();
-    return res.status(200).json({ accessToken, roles });
+    return res.status(200).json({ firstName, lastName, accessToken, roles });
   } catch (err) {
     console.log("err", err);
     await transaction.rollback();
