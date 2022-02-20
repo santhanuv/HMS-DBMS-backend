@@ -9,6 +9,8 @@ const { findUser, findUserByID } = require("../services/User.service");
 const { findStaff, findStaffByID } = require("../services/Staff.service");
 const { getDoctorCharge } = require("../services/Appointment_Charge.service");
 const Department = require("../models/index")["Department"];
+const sequelize = require("../models/index")["sequelize"];
+const { QueryTypes } = require("sequelize");
 
 const createAppointmentHandler = async (req, res) => {
   try {
@@ -81,16 +83,90 @@ const getAppointmentWithDate = async (req, res) => {
   const date = req.date;
 };
 
-const getLatestAppointments = async (req, res) => {};
+const getLatestAppointments = (requiredRole) => async (req, res) => {
+  try {
+    if (!req.user?.userID || !req.user?.roles) return res.sendStatus(401);
 
-const getAllAppointmentsHandler = async (req, res) => {
+    const userID = req.user.userID;
+    const userRoles = req.user.roles;
+
+    const docQuery =
+      "select a.*, ats.startTime, ats.endTime from Appointments as a join ATS as ats on a.timeSlotID = ats.slotID where a.date > NOW() and a.doctorID = :id order by ABS(DATEDIFF(a.date, NOW())) ASC LIMIT 3;";
+
+    const patientQuery =
+      "select a.*, ats.startTime, ats.endTime from Appointments as a join ATS as ats on a.timeSlotID = ats.slotID where a.date > NOW() and a.patientID = :id order by ABS(DATEDIFF(a.date, NOW())) ASC LIMIT 3;";
+
+    const query =
+      userRoles.indexOf("Patient") !== -1 && requiredRole === "Patient"
+        ? patientQuery
+        : userRoles.indexOf("Doctor") !== -1 && requiredRole === "Doctor"
+        ? docQuery
+        : null;
+
+    if (!query) return res.sendStatus(403);
+
+    const appointments = await sequelize.query(query, {
+      replacements: { id: userID },
+      type: QueryTypes.SELECT,
+    });
+
+    if (!appointments) throw new Error("No appointments");
+
+    const appValues = await Promise.all(
+      appointments.map(async (app) => {
+        const { doctorID, patientID, timeSlotID, startTime, endTime, ...rest } =
+          app;
+        if (!doctorID || !patientID) {
+          console.log(doctorID, patientID);
+          return {};
+        }
+        const doctor = (
+          await findUser({
+            where: { userID: doctorID },
+            attributes: ["userID", "firstName", "lastName"],
+          })
+        )[0]?.dataValues;
+        const patient = (
+          await findUser({
+            where: { userID: patientID },
+            attributes: ["userID", "firstName", "lastName"],
+          })
+        )[0]?.dataValues;
+        const appFormat = {
+          ...rest,
+          patient,
+          doctor,
+          time: { slotID: timeSlotID, startTime, endTime },
+        };
+        return appFormat;
+      })
+    );
+
+    return res.status(200).json(appValues);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
+};
+
+const getAllAppointmentsHandler = (requiredRole) => async (req, res) => {
   try {
     const userID = req?.user?.userID;
+    const userRoles = req?.user?.roles;
 
-    if (!userID) return res.sendStatus(401);
+    if (!userID || !userRoles) return res.sendStatus(401);
+
+    const query =
+      userRoles.indexOf("Patient") !== -1 && requiredRole === "Patient"
+        ? { patientID: userID }
+        : userRoles.indexOf("Doctor") !== -1 && requiredRole === "Doctor"
+        ? { doctorID: userID }
+        : null;
+
+    if (!query) return res.sendStatus(403);
 
     const appointments = await getAllAppointments({
-      where: { patientID: userID },
+      where: query,
     });
 
     const appValues = await Promise.all(
@@ -102,10 +178,15 @@ const getAllAppointmentsHandler = async (req, res) => {
             attributes: ["userID", "firstName", "lastName"],
           })
         )[0]?.dataValues;
+        const patientName = (
+          await findUser({
+            where: { userID: app.patientID },
+            attributes: ["userID", "firstName", "lastName"],
+          })
+        )[0]?.dataValues;
         const tsID = app.dataValues.timeSlotID;
         const tsVal = (await findATSByID(tsID))?.dataValues;
         const charge = (await getDoctorCharge(docID))?.dataValues?.charge;
-        console.log(docName);
 
         if (!docName || !tsVal || !charge) throw Error("Invalid appointment");
 
@@ -113,7 +194,7 @@ const getAllAppointmentsHandler = async (req, res) => {
           charge,
           appointmentID: app.dataValues.appointmentID,
           doctor: docName,
-          patientID: app.dataValues.patientID,
+          patient: patientName,
           date: app.dataValues.date,
           timeSlot: tsVal,
           isCompleted: app.dataValues.isCompleted,
@@ -123,7 +204,6 @@ const getAllAppointmentsHandler = async (req, res) => {
       })
     );
 
-    console.log(appValues);
     res.status(200).json(appValues);
   } catch (err) {
     console.log(err);
@@ -157,4 +237,5 @@ module.exports = {
   createAppointmentHandler,
   getAllAppointmentsHandler,
   deleteAppointmentHandler,
+  getLatestAppointments,
 };
